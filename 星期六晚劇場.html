@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>星期六晚劇場 · 家庭崇拜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --night: #1a120e;
+    --wood: #3a2418;
+    --paper: #f6ead2;
+    --ink: #2a1c14;
+    --muted: #6d5646;
+    --lamp: #f0b14a;
+    --flame: #ffd27a;
+    --coral: #d4653a;
+    --leaf: #3f6d52;
+    --sofa: #6b3a32;
+    --cream: #fff8ea;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: "Noto Sans TC", sans-serif;
+    color: var(--paper);
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, #3b2a18 0%, transparent 55%),
+      var(--night);
+  }
+  button, select, textarea { font-family: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 20px 18px 80px; }
+  header { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+  h1 {
+    font-family: Fraunces, serif;
+    font-size: 28px;
+    margin: 0 0 4px;
+    letter-spacing: 0.02em;
+  }
+  .sub { color: #cbb49a; font-size: 14px; }
+  .stage {
+    margin-top: 18px;
+    background: linear-gradient(#2b1c14, #1e140f);
+    border: 2px solid #5a3b28;
+    border-radius: 28px;
+    padding: 18px 16px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .stage.lit { box-shadow: inset 0 0 80px rgba(240, 177, 74, 0.18); }
+  .window {
+    position: absolute; top: 14px; right: 22px; width: 72px; height: 48px;
+    background: #0d1a2a; border: 3px solid #4a3224; border-radius: 6px;
+  }
+  .window::after { content: ""; position: absolute; inset: 6px; border: 1px solid #2a3d52; }
+  .cast {
+    display: flex; justify-content: center; align-items: flex-end; gap: 10px;
+    min-height: 168px; padding-bottom: 8px;
+  }
+  .person {
+    width: 88px; text-align: center; cursor: pointer; background: none; border: 0; color: inherit;
+  }
+  .person .body {
+    width: 64px; height: 78px; margin: 0 auto; border-radius: 32px 32px 10px 10px;
+    position: relative;
+  }
+  .person .head {
+    width: 42px; height: 42px; border-radius: 50%; margin: 0 auto 4px;
+    position: relative; z-index: 1;
+  }
+  .person .mouth {
+    position: absolute; left: 50%; bottom: 11px; width: 12px; height: 4px;
+    margin-left: -6px; border-radius: 0 0 10px 10px; background: #5a2e28;
+  }
+  .person.talking .mouth { animation: talk 0.28s infinite alternate; }
+  .person.singing .body { animation: sway 0.7s ease-in-out infinite; }
+  .person.active .head { outline: 3px solid var(--lamp); outline-offset: 3px; }
+  .p-fung .head { background: #e7c39a; }
+  .p-fung .body { background: #355c7d; }
+  .p-yan .head { background: #f0c7a8; }
+  .p-yan .body { background: #b85c38; }
+  .p-sis .head { background: #f3d0b0; }
+  .p-sis .body { background: #d98b3a; }
+  .p-bro .head { background: #ebc49a; }
+  .p-bro .body { background: #3f6d52; }
+  .person .name { margin-top: 6px; font-size: 13px; color: #f0d9b8; }
+  .person .job { font-size: 11px; color: #b79b80; }
+  .sofa {
+    height: 28px; background: var(--sofa); border-radius: 16px 16px 0 0;
+    margin: 0 40px; position: relative;
+  }
+  .lamp-wrap { display: flex; justify-content: center; margin-top: -12px; }
+  .lamp {
+    border: 0; background: none; cursor: pointer; color: #f0d9b8; text-align: center;
+  }
+  .lamp-cap { width: 54px; height: 18px; margin: 0 auto; background: #c9a15b; clip-path: polygon(8% 100%, 92% 100%, 100% 0, 0 0); }
+  .flame {
+    width: 14px; height: 22px; margin: -8px auto 0; border-radius: 50% 50% 40% 40%;
+    background: #5a3a12; transform: scale(0.2);
+  }
+  .stage.lit .flame {
+    background: var(--flame);
+    box-shadow: 0 0 18px 8px rgba(255, 210, 122, 0.55);
+    transform: scale(1);
+    animation: flicker 1.4s ease-in-out infinite;
+  }
+  .controls { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px; margin-top: 18px; }
+  @media (max-width: 820px) { .controls { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--cream); color: var(--ink); border-radius: 22px; padding: 16px 18px;
+  }
+  .card h2 { font-family: Fraunces, serif; font-size: 20px; margin: 0 0 8px; }
+  .meta { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+  .pill {
+    border: 0; background: #efe0c4; color: var(--ink); border-radius: 999px;
+    padding: 6px 12px; cursor: pointer; font-size: 13px;
+  }
+  .pill.on { background: var(--coral); color: #fff; }
+  .big-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .big {
+    border: 0; border-radius: 16px; padding: 12px 16px; cursor: pointer; font-weight: 700;
+    font-size: 15px; color: #fff;
+  }
+  .big.song { background: var(--coral); }
+  .big.read { background: var(--leaf); }
+  .big.story { background: #355c7d; }
+  .big.stop { background: #5c4638; }
+  .big:disabled { opacity: 0.45; cursor: not-allowed; }
+  .script {
+    background: #fff; border-radius: 14px; padding: 12px 14px; min-height: 96px;
+    font-size: 16px; line-height: 1.7;
+  }
+  .script .now { background: #ffe08a; border-radius: 4px; }
+  .piano {
+    display: flex; height: 92px; margin-top: 10px; border-radius: 10px; overflow: hidden;
+    background: #111;
+  }
+  .key {
+    flex: 1; background: #f7f1e4; border-right: 1px solid #cbbba4;
+    position: relative;
+  }
+  .key:last-child { border-right: 0; }
+  .key.on { background: var(--lamp); }
+  .yt {
+    width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 14px; background: #111;
+    margin-top: 8px;
+  }
+  .weekbar { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 4px; }
+  .dot {
+    min-width: 28px; height: 28px; border-radius: 50%; border: 0; cursor: pointer;
+    background: #4a3428; color: #f0d9b8; font-size: 11px;
+  }
+  .dot.here { background: var(--lamp); color: #2a1c14; font-weight: 700; }
+  .dot.done { background: var(--leaf); color: #fff; }
+  .q { background: #fff; border-radius: 12px; padding: 10px 12px; margin-top: 8px; }
+  .q b { color: var(--coral); }
+  .meet li { margin: 6px 0; }
+  .voice-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  select, textarea {
+    background: #fff; border: 1px solid #e0d0b6; border-radius: 10px; padding: 6px 8px; color: var(--ink);
+  }
+  textarea { width: 100%; min-height: 70px; margin-top: 8px; }
+  .person-note textarea { min-height: 52px; margin-top: 0; }
+  .toast {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: #fff8ea; color: var(--ink); padding: 10px 16px; border-radius: 999px;
+    display: none; z-index: 9;
+  }
+  .timerbar {
+    position: sticky; top: 8px; z-index: 30;
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    background: #2a1c14; border: 2px solid #6a452e; border-radius: 18px;
+    padding: 10px 14px; margin-top: 14px;
+  }
+  .clockbox { min-width: 118px; }
+  .clock {
+    font-family: Fraunces, serif; font-size: 30px; line-height: 1;
+    font-variant-numeric: tabular-nums; color: var(--lamp);
+  }
+  .clock.warn { color: #ffb35c; }
+  .clock.over { color: #ff7a5c; }
+  .clock-label { font-size: 11px; color: #cbb49a; margin-top: 2px; }
+  .timerbar .big { padding: 8px 12px; font-size: 13px; }
+  .timer-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+  .timer-presets button {
+    border: 0; background: #4a3428; color: #f0d9b8; border-radius: 999px;
+    padding: 5px 10px; cursor: pointer; font-size: 12px;
+  }
+  .timer-presets button.on { background: var(--coral); color: #fff; }
+  .meetboard { margin-top: 16px; }
+  .meet-steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+  .meet-steps button {
+    border: 0; background: #efe0c4; color: var(--ink); border-radius: 12px;
+    padding: 8px 10px; cursor: pointer; font-size: 13px;
+  }
+  .meet-steps button.on { background: var(--leaf); color: #fff; }
+  .meet-panel h3 { font-family: Fraunces, serif; font-size: 18px; margin: 0 0 6px; }
+  .why {
+    background: #fff; border-radius: 12px; padding: 10px 12px; font-size: 14px;
+    line-height: 1.65; margin: 8px 0;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .chips button {
+    border: 0; background: #efe0c4; color: var(--ink); border-radius: 999px;
+    padding: 6px 10px; cursor: pointer; font-size: 13px;
+  }
+  .people-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 640px) { .people-grid { grid-template-columns: 1fr; } }
+  .person-note { background: #fff; border-radius: 12px; padding: 8px 10px; }
+  .person-note label { font-weight: 700; font-size: 13px; display: block; margin-bottom: 4px; }
+  .temps { display: flex; gap: 4px; margin-top: 6px; }
+  .temps button {
+    width: 32px; height: 32px; border: 0; border-radius: 8px; cursor: pointer;
+    background: #efe0c4; color: var(--ink); font-weight: 700;
+  }
+  .temps button.on5 { background: var(--leaf); color: #fff; }
+  .temps button.on4 { background: #6a8f4e; color: #fff; }
+  .temps button.on3 { background: var(--lamp); color: #2a1c14; }
+  .temps button.on2 { background: #d4653a; color: #fff; }
+  .temps button.on1 { background: #a33b28; color: #fff; }
+  .rules { list-style: none; padding: 0; margin: 8px 0; }
+  .rules li {
+    background: #fff; border-radius: 10px; padding: 8px 10px; margin: 6px 0;
+    display: flex; gap: 8px; align-items: flex-start; font-size: 14px;
+  }
+  .cal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 640px) { .cal-grid { grid-template-columns: 1fr; } }
+  .hidden { display: none; }
+  @keyframes talk { from { height: 3px; } to { height: 9px; } }
+  @keyframes sway { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+  @keyframes flicker { 50% { transform: scale(1.08); opacity: 0.85; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>星期六晚劇場</h1>
+      <div class="sub">逢星期六 21:00 · 鋒同恩領詩 · 小朋友讀經 · 廣東話開聲</div>
+    </div>
+    <div>
+      <select id="weekSel"></select>
+    </div>
+  </header>
+
+  <div class="timerbar">
+    <div class="clockbox">
+      <div class="clock" id="clockNight">45:00</div>
+      <div class="clock-label">全晚 45 分鐘</div>
+    </div>
+    <div class="clockbox">
+      <div class="clock" id="clockSeg">04:00</div>
+      <div class="clock-label" id="segLabel">本段：未開始</div>
+    </div>
+    <button class="big song" id="btnTimer">開始</button>
+    <button class="big stop" id="btnTimerPause">暫停</button>
+    <button class="big stop" id="btnTimerReset">重設</button>
+    <div class="timer-presets" id="timerPresets">
+      <button type="button" data-kind="night" data-sec="2700">全晚 45</button>
+      <button type="button" data-kind="worship" data-sec="1200">崇拜 20</button>
+      <button type="button" data-kind="meet" data-sec="1200">會議 20</button>
+      <button type="button" data-kind="thanks" data-sec="240">感謝 4</button>
+      <button type="button" data-kind="temp" data-sec="180">溫度 3</button>
+      <button type="button" data-kind="rules" data-sec="120">家規 2</button>
+      <button type="button" data-kind="topic" data-sec="300">一項 5</button>
+      <button type="button" data-kind="cal" data-sec="240">行程 4</button>
+      <button type="button" data-kind="pray" data-sec="120">代禱 2</button>
+    </div>
+  </div>
+
+  <section class="stage" id="stage">
+    <div class="window" title="窗外夜晚"></div>
+    <div class="cast">
+      <button class="person p-fung" data-who="fung" id="pFung"><div class="head"><span class="mouth"></span></div><div class="body"></div><div class="name">鋒</div><div class="job" id="jobFung">領詩</div></button>
+      <button class="person p-yan" data-who="yan" id="pYan"><div class="head"><span class="mouth"></span></div><div class="body"></div><div class="name">恩</div><div class="job" id="jobYan">領詩</div></button>
+      <button class="person p-sis" data-who="sis" id="pSis"><div class="head"><span class="mouth"></span></div><div class="body"></div><div class="name">姐姐</div><div class="job" id="jobSis">讀經</div></button>
+      <button class="person p-bro" data-who="bro" id="pBro"><div class="head"><span class="mouth"></span></div><div class="body"></div><div class="name">弟弟</div><div class="job" id="jobBro">讀經</div></button>
+    </div>
+    <div class="sofa"></div>
+    <div class="lamp-wrap">
+      <button class="lamp" id="lampBtn" type="button">
+        <div class="flame" id="flame"></div>
+        <div class="lamp-cap"></div>
+        <div>點聚會燈</div>
+      </button>
+    </div>
+  </section>
+
+  <div class="weekbar" id="weekbar"></div>
+
+  <div class="controls">
+    <article class="card">
+      <h2 id="title">本週主題</h2>
+      <div class="meta" id="meta"></div>
+      <div class="pills">
+        <button class="pill on" data-step="song">1 領詩</button>
+        <button class="pill" data-step="verse">2 金句</button>
+        <button class="pill" data-step="story">3 講故</button>
+        <button class="pill" data-step="talk">4 討論</button>
+        <button class="pill" data-step="meet">5 會議</button>
+      </div>
+      <div class="big-row">
+        <button class="big song" id="btnSong">播放詩歌</button>
+        <button class="big read" id="btnVerse">廣東話讀金句</button>
+        <button class="big story" id="btnStory">廣東話講故</button>
+        <button class="big stop" id="btnStop">停</button>
+      </div>
+      <div class="voice-row">
+        <span>聲線</span>
+        <select id="voiceSel"></select>
+        <span>速度</span>
+        <select id="rateSel">
+          <option value="0.78">慢</option>
+          <option value="0.9" selected>剛好</option>
+          <option value="1.05">快少少</option>
+        </select>
+      </div>
+      <div class="script" id="script">點燈之後，按「廣東話讀金句」或「廣東話講故」。電腦會用粵語朗讀，小朋友跟住讀出嚟。</div>
+      <div class="piano" id="piano"></div>
+      <iframe class="yt" id="yt" allow="autoplay; encrypted-media" allowfullscreen title="詩歌 MV"></iframe>
+      <label class="meta" for="custom">想讀自己聖經嘅經文？貼喺下面。</label>
+      <textarea id="custom" placeholder="貼和合本／新譯本經文，用廣東話朗讀……"></textarea>
+      <div class="big-row" style="margin-top:8px">
+        <button class="big story" id="btnCustom">朗讀我貼嘅經文</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <h2>今晚輪值</h2>
+      <div id="side"></div>
+      <div class="q" id="qBox"></div>
+    </article>
+  </div>
+
+  <section class="card meetboard" id="meetboard">
+    <h2>家庭會議 · 每週同一套</h2>
+    <p class="meta">會議主持跟住六步讀。時間到就停，未講完寫低下週再續。下面可以寫、可以剔，會記喺呢部電腦。</p>
+    <div class="meet-steps" id="meetSteps"></div>
+    <div class="meet-panel" id="meetPanel"></div>
+    <div class="big-row" style="margin-top:12px">
+      <button class="big story" id="btnMeetRead">用廣東話讀呢一段</button>
+      <button class="big stop" id="btnDone">本週完成＋祝福</button>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const VERSES = {
+  "申 6:5": "你要盡心、盡性、盡力愛耶和華你的神。",
+  "弗 6:1": "你們作兒女的，要在主裡聽從父母，這是理所當然的。",
+  "帖前 5:18": "凡事謝恩，因為這是神在基督耶穌裡向你們所定的旨意。",
+  "路 2:11": "因今天在大衛的城裡，為你們生了救主，就是主基督。",
+  "太 4:19": "耶穌對他們說：來跟從我，我要叫你們得人如得魚一樣。",
+  "林前 13:4": "愛是恆久忍耐，又有恩慈；愛是不嫉妒；愛是不自誇，不張狂。",
+  "約 3:16": "神愛世人，甚至將祂的獨生子賜給他們，叫一切信祂的，不至滅亡，反得永生。",
+  "加 5:22": "聖靈所結的果子，就是仁愛、喜樂、和平、忍耐、恩慈、良善、信實。",
+  "弗 4:32": "並要以恩慈相待，存憐憫的心，彼此饒恕，正如神在基督耶穌裡饒恕了你們一樣。",
+  "箴 3:5–6": "你要專心仰賴耶和華，不可倚靠自己的聰明。在你一切所行的事上都要認定祂，祂必指引你的路。",
+  "太 5:16": "你們的光也當這樣照在人前，叫他們看見你們的好行為，便將榮耀歸給你們在天上的父。",
+  "書 1:9": "你當剛強壯膽，不要懼怕，也不要驚惶，因為你無論往哪裡去，耶和華你的神必與你同在。",
+  "書 24:15 下": "至於我和我家，我們必定事奉耶和華。"
+};
+
+const YT = {
+  "耶穌愛我": "JpcReGiATWY",
+  "奇異恩典": "3h1Swizw0RM"
+};
+
+const WEEKS = [
+  {n:1,date:"2026-09-19",title:"我們為何家庭崇拜",scripture:"申命記 6:4–9",verse:"申 6:5",song:"耶穌愛我",q8:"你覺得崇拜係做咩？",q11:"點解屋企都要講神，唔好淨返教會？",meeting:"通過家規、定座位同燈。領詩得鋒同恩輪，讀經由小朋友負責。",story:"摩西同以色列人講：以色列啊，你要聽！我哋嘅神耶和華係獨一嘅主。你要盡心、盡性、盡力愛佢。呢啲話要記喺心裡面，返到屋企都要教細路。坐喺度、行路、瞓覺、起身，都講神嘅話。所以我哋每個星期六晚，都會開家庭崇拜。"},
+  {n:2,date:"2026-09-26",title:"神的話是燈",scripture:"詩篇 119:105；約翰福音 8:12",verse:"申 6:5",song:"主是我的亮光",q8:"黑黑地下你會搵咩？",q11:"你最近一次唔知點算，問咗邊個？",meeting:"十月月曆同家務試行。",story:"詩人話：你的話係我腳前嘅燈，路上嘅光。耶穌又話：我係世界嘅光。月會圓會缺，但神嘅話唔會熄。迷路嘅時候，我哋先問聖經點講，再問自己感覺點。屋企要有光：打開聖經，人同人坦白。"},
+  {n:3,date:"2026-10-03",title:"神設立家庭",scripture:"創世記 1–2",verse:"弗 6:1",song:"神的愛",q8:"我哋家四個人，每人一件你鍾意嘅事？",q11:"家若係禮物，應該點樣好好用？",meeting:"畫家庭角色圖，睇邊個太攰。",story:"起初神造男造女，又話人唔好單獨。神將家庭當成禮物送俾人。爸爸媽媽、姐姐弟弟，各有位置，冇人係多餘。家嘅工作係相愛、一齊生活、互相照顧。我哋呢一家，都係神親手擺埋一齊。"},
+  {n:4,date:"2026-10-10",title:"孝敬不是怕，是尊榮",scripture:"出埃及記 20:12；以弗所書 6:1–4",verse:"弗 6:1",song:"當孝敬父母",q8:"邊句說話令爸爸媽媽覺得被尊重？",q11:"服從同盲從有咩分別？",meeting:"講語氣同歸位。孩子可提一項俾父母改。",story:"十誡裡面有一句：當孝敬父母。保羅又對小朋友講：要喺主裡面聽從父母。孝敬唔係驚到唔敢出聲，而係用尊重嘅語氣，幫手，認真聽。爸爸媽媽都有功課：唔好惹孩子發脾氣，要用主嘅教導養。家和，人就穩。"},
+  {n:5,date:"2026-10-17",title:"彼此相愛",scripture:"約翰一書 4:7–11",verse:"弗 6:1",song:"讓我們彼此相愛",q8:"邊樣行動令你覺得被愛？",q11:"好難愛嘅時候，愛仲算唔算愛？",meeting:"每人講：我最感到被愛係當你……",story:"約翰話：我哋應當彼此相愛，因為愛係從神嚟。神先愛我哋，甚至差祂個仔。所以屋企唔單止講愛，而係做出嚟：擁抱、幫忙、細聲講、等對方講完。愛有時冇感覺，但仍然可以揀去做。"},
+  {n:6,date:"2026-10-24",title:"生氣，卻不要留下仇",scripture:"以弗所書 4:26–32",verse:"弗 6:1",song:"主你是我最知心的朋友",q8:"你生氣嗰陣身體有咩感覺？",q11:"點解即刻反擊通常更差？",meeting:"定紅燈口號同修復句。",story:"聖經話：生氣但唔好犯罪，唔好含怒到日落。即係話，有火唔羞家，但唔可以留過夜去傷人。修復有四步：停、講事實、求原諒、接受原諒。神饒恕我哋，所以我哋都可以放人一馬。"},
+  {n:7,date:"2026-10-31",title:"做光明的孩子",scripture:"以弗所書 5:8–14",verse:"弗 6:1",song:"這小燈光",q8:"光同黑你鍾意邊樣？",q11:"同學玩驚嚇題材，可以點樣有禮咁唔跟？",meeting:"訂螢幕規則。",story:"你哋從前係暗，而家喺主裡面係光，行事就要好似光明嘅子女。光會顯露隱密嘅嘢，所以秘密睇嘅片、隱瞞嘅遊戲，都要見光。我哋唔用驚嚇吸引人，而係用善行照亮屋企同學校。"},
+  {n:8,date:"2026-11-07",title:"講真話",scripture:"以弗所書 4:25；箴言 12:22",verse:"帖前 5:18",song:"我要真誠",q8:"你最近一次好想隱瞞係為咗咩？",q11:"為咗唔傷害人而講半句真，算唔算誠實？",meeting:"誠實罐：自首先多謝再處理。",story:"所以你哋要棄絕謊言，各人同鄰舍說實話。耶和華喜愛誠實嘅唇。隱瞞同誇大，都係唔真。屋企要做一個地方：講真話都安全，唔會被嘲笑。講真話可以溫柔，但一定要真。"},
+  {n:9,date:"2026-11-14",title:"勤勞的智慧",scripture:"箴言 6:6–11",verse:"帖前 5:18",song:"多謝主",q8:"你最想拖嘅家務或功課係咩？",q11:"玩同休息有咩分別？",meeting:"家務責任表檢討。",story:"你呢個懶惰人啊，去睇吓螞蟻。佢冇監督都自己準備糧食。再睡一陣，貧窮就好似強盜咁嚟。勤勞唔等於不停，而係先做應該做嘅，再去玩。今日嘅二十分鐘，可以救明日好多麻煩。"},
+  {n:10,date:"2026-11-21",title:"凡事謝恩",scripture:"帖撒羅尼迦前書 5:16–18",verse:"帖前 5:18",song:"感恩祭",q8:"呢週三件想講多謝嘅事？",q11:"有冇一件難事，你仍然可以為其中一樣謝神？",meeting:"第一季回顧，聖誕預算。",story:"要常常喜樂，不住禱告，凡事謝恩。呢個係神嘅旨意。感恩唔係扮無事，而係喺難處裡面仍然見到神同家人嘅好處。多謝會改屋企氣氛。今晚每人講一件多謝。"},
+  {n:11,date:"2026-11-28",title:"等候的人有福了",scripture:"以賽亞書 9:2, 6–7",verse:"路 2:11",song:"普世歡騰",q8:"等生日同等耶穌有咩似？",q11:"和平的君嚟咗，點解世界仲有戰爭？",meeting:"十二月行程同禮物原則。",story:"喺黑暗行路嘅百姓，見到大光。有一嬰孩為我哋而生，名稱為奇妙、策士、全能的神、永在的父、和平的君。舊約嘅人等救主等得好耐。將臨期教我哋等候，唔好一早就把節日用完。耶穌真係嚟過。"},
+  {n:12,date:"2026-12-05",title:"應許中的嬰孩",scripture:"彌迦書 5:2；路加福音 1:26–38",verse:"路 2:11",song:"馬槽歌",q8:"天使話你做一件大事，你怕唔怕？",q11:"點解答應一件好難嘅事？",meeting:"聖誕服事分工。",story:"先知話彌賽亞會喺細細的伯利恆出世。後來天使加百列去搵馬利亞，話佢會生耶穌。馬利亞起初好亂，後來講：我是主的使女，情願照你的話成就。神揀細城、細女孩，做成大事。信心就係話：我願意。"},
+  {n:13,date:"2026-12-12",title:"馬利亞的歌",scripture:"路加福音 1:46–55",verse:"路 2:11",song:"我心尊主為大",q8:"你想用歌定畫多謝神？",q11:"今年有冇你以為自己好勁、其實要謙卑嘅事？",meeting:"聖誕週刪一項活動。",story:"馬利亞唱歌：我心尊主為大，我靈以神我的救主為樂。因為祂顧念卑微嘅使女。神拉下權勢者，叫飢餓嘅得飽食。聖誕最緊要唔係裝飾完唔完成，而係心裡面尊主為大。"},
+  {n:14,date:"2026-12-19",title:"救主為你們降生",scripture:"路加福音 2:1–20",verse:"路 2:11",song:"齊來崇拜",q8:"若耶穌今晚生喺我哋屋企，你會俾邊度佢瞓？",q11:"牧羊人聽完就去。你聽完福音，下一步係咩？",meeting:"聖誕當日流程。",story:"約瑟同馬利亞去伯利恆報名上冊，客店冇位，嬰孩用布包住，放喺馬槽。天使對牧羊人講：唔好怕，我報俾你哋大喜訊，今日為你哋生咗救主。牧羊人即刻去睇，又將呢件事傳開。福音係俾普通人嘅。"},
+  {n:15,date:"2026-12-26",title:"獻上最好的",scripture:"馬太福音 2:1–12",verse:"路 2:11",song:"三博士",q8:"你最鍾意邊份聖誕禮物？有冇一樣想還俾耶穌？",q11:"點樣過聖誕會變成只為自己？",meeting:"2026 年終三件高光。",story:"有幾個博士從東方嚟，話見到佢的星，特登嚟拜佢。佢哋獻上黃金、乳香、沒藥。希律王好驚，想害細路。博士得夢指示，就從別的路返去。敬拜係把最好的俾耶穌，唔係為咗得到。"},
+  {n:16,date:"2027-01-02",title:"向著標竿直跑",scripture:"腓立比書 3:12–14",verse:"太 4:19",song:"一生愛你",q8:"2027 你想學識一樣新嘢？",q11:"你想忘記去年邊件，努力邊件？",meeting:"通過 2027 家庭目標。",story:"保羅話：我唔係話已經完全，我只係竭力追求。忘記背後，努力面前，向住標竿直跑。新年唔使扮完美。去年失敗唔使鎖死你。我哋一家嘅標竿唔係成績表，係更加認識耶穌。"},
+  {n:17,date:"2027-01-09",title:"這是我的愛子",scripture:"馬太福音 3:13–17",verse:"太 4:19",song:"我是蒙愛的",q8:"爸媽鍾意你，係因為考好定因為你係你？",q11:"若神已喜悅你，仲點解要努力做好？",meeting:"學業節奏，禁止比較同學。",story:"耶穌到約旦河，請約翰為祂施洗。天開咗，聖靈好似鴿子降臨，有聲音話：呢個係我的愛子，我所喜悅的。耶穌當時未做神蹟，天父已經喜悅祂。你嘅身分先過表現。你係蒙愛的，唔單因為成績。"},
+  {n:18,date:"2027-01-16",title:"勝過試探",scripture:"馬太福音 4:1–11",verse:"太 4:19",song:"堅固保障",q8:"有人叫你做唔對嘅事，你可以講咩？",q11:"遊戲、短片、起哄，邊樣最拉你？",meeting:"網絡遊戲界限。講出嚟唔會先罰。",story:"耶穌喺曠野四十日，又餓。魔鬼叫祂將石頭變包、由殿頂跳落、向佢叩拜就得到萬國。耶穌每一次都用神的話回答：人活著唔單靠食物。試探會打肚餓、驕傲、走捷徑。你唔使一個人硬撐，要講出嚟。"},
+  {n:19,date:"2027-01-23",title:"來跟從我",scripture:"馬可福音 1:16–20",verse:"太 4:19",song:"使我成祝福",q8:"漁夫放下網，你捨唔捨得放下最愛去幫人？",q11:"你而家跟緊邊個？",meeting:"寫家庭使命一句。",story:"耶穌喺海邊見到西門、安得烈喺度打魚，話：來跟從我，我要叫你哋得人如得魚。佢哋就放下網跟祂。又叫雅各約翰，連亞爸都一齊放下。跟隨有代價，但耶穌叫嘅係普通人，唔等你準備好。"},
+  {n:20,date:"2027-01-30",title:"真正的福氣",scripture:"馬太福音 5:1–12",verse:"太 4:19",song:"八福",q8:"你覺得邊種人有福？耶穌點睇？",q11:"你最難學係溫柔、憐憫定清心？",meeting:"春節行程。",story:"耶穌上山，開口教八福。虛心的人有福，哀慟的人有福，溫柔、飢渴慕義、憐恤、清心、使人和睦的人有福。世界話福氣等於贏同被讚。耶穌話福氣係一種心。本季每人揀一個福嚟練習。"},
+  {n:21,date:"2027-02-06",title:"在基督裡成為新造的人",scripture:"哥林多後書 5:17",verse:"林前 13:4",song:"奇異恩典",q8:"你想今年新在邊樣？",q11:"外表新年，內心可以點樣真的新？",meeting:"利是三分：奉獻儲蓄使用。",story:"若有人喺基督裡，佢就係新造的人。舊事已過，都變成新的了。新年換新衫好易，換新心要耶穌。拜年嘅祝福要認真，唔好淨識講恭喜發財。新造的人對長輩有禮，對店員都有禮。"},
+  {n:22,date:"2027-02-13",title:"愛是恆久忍耐",scripture:"哥林多前書 13:4–7",verse:"林前 13:4",song:"愛的真諦",q8:"忍耐係等，定係等嘅時候仲溫柔？",q11:"邊句愛是、愛不是最似你而家？",meeting:"手足妒嫉攤開講。",story:"愛是恆久忍耐，又有恩慈。愛不嫉妒、不自誇、不張狂，不做害羞的事，不求自己的益處，不輕易發怒，不計算人的惡。愛係節日之外仍然揀對方。兄弟姐妹最需要呢段經文。"},
+  {n:23,date:"2027-02-20",title:"誰是我的鄰舍",scripture:"路加福音 10:25–37",verse:"林前 13:4",song:"使我們合一",q8:"學校裡邊個好似跌喺路旁？",q11:"你最近一次行過去係幾時？",meeting:"選一個可幫助的對象。",story:"有人問耶穌：邊個係我的鄰舍？耶穌講好撒瑪利亞人：有人俾賊打到半死，祭司同利未人行過去，一個撒瑪利亞人停低、包紮、帶去客店、俾錢。鄰舍唔係你鍾意嘅人，係你遇見、需要你嘅人。"},
+  {n:24,date:"2027-02-27",title:"可以回家",scripture:"路加福音 15:11–32",verse:"林前 13:4",song:"浪子心聲",q8:"做錯事你怕返屋企定想返？",q11:"你比較似細仔定大仔？",meeting:"練習認錯句。",story:"細仔攞咗財產去遠方亂花，後來窮到睇豬食嘅豆莢。佢醒悟，返去想做長工。阿爸遠遠見到，就跑過去抱住佢。大仔好唔高興，覺得自己一直乖都冇派對。家係可以返嘅地方。比較都會令人失喪。"},
+  {n:25,date:"2027-03-06",title:"你們禱告要這樣",scripture:"馬太福音 6:5–15",verse:"約 3:16",song:"主禱文歌",q8:"你會同神講秘密嗎？",q11:"主禱文你最常漏邊句？",meeting:"家庭代禱名單。",story:"耶穌話唔好站喺街角表演禱告。你哋禱告要這樣：我們在天上的父，願人都尊你的名為聖，願你的國降臨……今日的飲食、免我們的債、不叫我們遇見試探。禱告係對父說話。不饒恕會塞住禱告。"},
+  {n:26,date:"2027-03-13",title:"不要憂慮",scripture:"馬太福音 6:25–34",verse:"約 3:16",song:"祂的眼目看顧麻雀",q8:"你最常擔心咩？",q11:"憂慮同負責任有咩分別？",meeting:"打開憂慮箱。",story:"唔好為生命憂慮食乜、著乜。你睇天上嘅飛鳥，天父養佢哋。你哋比飛鳥貴重得多。一天的難處一天當就夠。憂慮加唔到壽數，但會偷咗今日。今晚把擔心寫低，一齊交託。"},
+  {n:27,date:"2027-03-20",title:"謙卑的君王",scripture:"馬太福音 21:1–11",verse:"約 3:16",song:"和散那",q8:"你鍾意人讚你嗎？讚完之後會點？",q11:"點解真正的王可以揀謙卑？",meeting:"復活節週，未和好就本週修。",story:"耶穌騎住驢駒入耶路撒冷，人鋪衣服、斬樹枝，喊和散那，奉主名來的是應當稱頌的。過幾日，同樣一班人可以喊釘死祂。耶穌揀驢唔揀戰馬。真君王嘅方式同世界相反。情緒讚美唔等於信心。"},
+  {n:28,date:"2027-03-27",title:"祂死了，也復活了",scripture:"馬可福音 15–16",verse:"約 3:16",song:"因祂活著",q8:"若耶穌活著，你今晚想同佢講咩？",q11:"復活若是真，你對失敗同死亡會有咩唔同？",meeting:"第三季回顧同寬恕清單。",story:"耶穌喺十字架上，黑暗籠罩，祂喊：我的神，我的神，點解離棄我。百夫長話：呢個人真係神的兒子。婦女去墳墓，石頭已經輥開，一個年輕人話：祂復活了，唔好驚。死有代價，但死唔係最後一句。"},
+  {n:29,date:"2027-04-03",title:"保惠師與我們同在",scripture:"約翰福音 14:15–17, 26",verse:"加 5:22",song:"聖靈請你來",q8:"有人喺隔離幫你，同自己硬撐有咩分別？",q11:"點知一樣改變係聖靈定只係想做好孩子？",meeting:"每人揀一粒最弱的果子。",story:"耶穌話：我唔會撇下你哋為孤兒。父會另外賜俾你哋一位保惠師，就係真理的聖靈，永遠同你哋同在。聖靈會教導、提醒耶穌講過嘅話。品格唔係靠咬實牙關，而係連住耶穌，好似枝子連住葡萄樹。"},
+  {n:30,date:"2027-04-10",title:"仁愛",scripture:"加拉太書 5:22；路加福音 6:27–31",verse:"加 5:22",song:"讓愛走動",q8:"對兄弟姐妹仁愛，今日可以點做？",q11:"愛敵人同冇界限有咩分別？",meeting:"比較同公平。",story:"聖靈所結的果子，第一樣係仁愛。耶穌話：你哋的仇敵，要愛佢；恨你嘅，要待佢好。你想人點待你，你就點待人。仁愛係為對方好處行動，包括對你唔啱嘅人。屋企仁愛由語氣同分享開始。"},
+  {n:31,date:"2027-04-17",title:"喜樂",scripture:"腓立比書 4:4–7",verse:"加 5:22",song:"喜樂的心乃是良藥",q8:"邊樣事令我哋家開心？",q11:"你可以唔開心但仍然揀喜樂嗎？",meeting:"定每月一次開心約會。",story:"你哋要靠主常常喜樂。應當一無掛慮，只要凡事藉住禱告、祈求同感謝，將所要嘅告訴神。神所賜出人意外的平安，必喺基督耶穌裡保守你哋的心懷意念。喜樂唔等於事事順利。笑聲可以有，但唔好用嘲笑換。"},
+  {n:32,date:"2027-04-24",title:"和平",scripture:"羅馬書 12:18；馬太福音 5:9",verse:"加 5:22",song:"讓我愛而不受感戴",q8:"兩個朋友嘈交，你可以點幫又唔做法官？",q11:"一味讓算唔算真和平？",meeting:"房間玩具浴室條約。",story:"若是能行，總要盡力與眾人和睦。使人和睦的人有福了，因為佢哋必稱為神的兒子。和平唔係噤聲，而係主動修橋。有時對方唔肯，你仍然盡了。屋企輪流、講清楚，都係和平的練習。"},
+  {n:33,date:"2027-05-01",title:"忍耐",scripture:"雅各書 1:2–4",verse:"弗 4:32",song:"有福的確據",q8:"等輪到你嗰陣可以做咩？",q11:"你最冇耐心係對人定對自己？",meeting:"母親節預告。",story:"遇見百般試煉，都要以為大喜樂，因為信心經過試驗，就生忍耐。忍耐係壓力下面仍然唔放棄啱嘅事。等功課、等輪玩、等大人忙完，都係訓練。等完先講，往往比即刻爆發更好。"},
+  {n:34,date:"2027-05-08",title:"恩慈",scripture:"以弗所書 4:32；箴言 31",verse:"弗 4:32",song:"感恩短詩",q8:"媽媽最辛苦係做邊樣？",q11:"你用咩語氣同媽媽說話？",meeting:"爸爸主持母親節計劃。",story:"要以恩慈相待，存憐憫的心，彼此饒恕，正如神在基督裡饒恕咗你哋。箴言讚一位賢德嘅婦人，開口就發智慧，兒女起來稱佢有福。媽媽日常嘅恩慈好多時被當免費。孝敬要具體、今日、可以看見。"},
+  {n:35,date:"2027-05-15",title:"良善",scripture:"彌迦書 6:8；使徒行傳 9:36",verse:"弗 4:32",song:"求主助我為人",q8:"你可做一件冇人知嘅好事嗎？",q11:"做好事想被讚，仲算唔算良善？",meeting:"良善基金。",story:"世人哪，耶和華已指示你何為善：行公義，好憐憫，存謙卑的心與你的神同行。約帕有個女信徒叫大比大，又叫多加，她廣行善事，做衣服俾人。良善好普通，但可以救人。偷偷做好事，唔使直播。"},
+  {n:36,date:"2027-05-22",title:"信實",scripture:"路加福音 16:10",verse:"弗 4:32",song:"堅心倚靠",q8:"你答應過但忘記嘅事？",q11:"點解可能啦有時比不更傷人？",meeting:"守承諾表。父母陪玩唔好隨便取消。",story:"人喺最小的事上忠心，喺大事上都忠心。信實就係小事都守承諾：準時、交功課、話陪就真係陪。失信要補，唔好裝無事。神信實，所以我哋學得識信實。答應之前想清楚，做唔到就早講。"},
+  {n:37,date:"2027-05-29",title:"溫柔",scripture:"馬太福音 11:28–30；箴言 15:1",verse:"弗 4:32",song:"柔和謙卑",q8:"大聲同溫柔，邊樣令你想聽？",q11:"你對誰最唔溫柔？",meeting:"語氣約章。",story:"耶穌話：我心裡柔和謙卑，你哋當負我的軛，學我的樣式，心就必得享安息。回答柔和，使怒消退。溫柔唔係軟弱，耶穌又溫柔又有力。對細路、對動物、對做錯嘅人，先溫柔。講錯可以重講一次。"},
+  {n:38,date:"2027-06-05",title:"節制",scripture:"哥林多前書 9:24–27；箴言 25:28",verse:"箴 3:5–6",song:"奉獻所有",q8:"零食、遊戲、晚瞓，邊樣最難停？",q11:"節制同被家長控制有咩分別？",meeting:"睡眠螢幕零食時限。",story:"賽跑的都跑，但得獎的只有一個。凡較力嘅，諸事都有節制。人不制伏自己的心，好似城牆毀壞的城。節制係自己有方向，唔被食欲、螢幕、脾氣拖走。節制為咗自由，唔為罰自己。"},
+  {n:39,date:"2027-06-12",title:"穿上軍裝",scripture:"以弗所書 6:10–18",verse:"箴 3:5–6",song:"精兵起來",q8:"你怕黑、怕人定怕失敗？",q11:"邊件軍裝你最常忘記？",meeting:"校園人際紅線即日要講。",story:"要穿戴神所賜的全副軍裝，就能抵擋魔鬼的詭計。腰帶係真理，護心鏡係公義，鞋係福音，盾牌係信，頭盔係救恩，劍係神的話，仲有多多禱告。謊言、恐懼、比較都係真戰場。你唔使自己一個上陣。"},
+  {n:40,date:"2027-06-19",title:"父親的心",scripture:"詩篇 103:13；路加福音 15:20",verse:"箴 3:5–6",song:"天父的家",q8:"爸爸做過邊件令你覺得被愛？",q11:"你希望爸爸多一樣、少一樣？",meeting:"母親節之後嘅父親節計劃，品格回顧。",story:"父親怎樣憐恤他的兒女，耶和華也怎樣憐恤敬畏祂的人。浪子的阿爸遠遠見到就跑。地上的爸爸會錯，都可以向孩子認錯。天父唔會錯。好父親唔等完美講稿先擁抱。"},
+  {n:41,date:"2027-06-26",title:"作鹽作光",scripture:"馬太福音 5:13–16",verse:"太 5:16",song:"這小燈光",q8:"點樣令一間房亮啲？人可以點樣令一個地方好啲？",q11:"喺同學面前承認信耶穌你怕咩？",meeting:"暑假月曆，保護星期六聚會。",story:"你哋係世上的鹽。鹽若失了味，還能叫它再鹹嗎？你哋係世上的光。城造在山上是不能隱藏的。人點燈，唔係放喺斗底下。暑假去到邊，就光到邊。信仰藏起就冇用。"},
+  {n:42,date:"2027-07-03",title:"數算自己的日子",scripture:"詩篇 90:12",verse:"太 5:16",song:"時光易過",q8:"如果一日得三格，你會放入咩？",q11:"你用時間嘅方式會令未來嘅你後悔嗎？",meeting:"暑假作息表。",story:"求你指教我們怎樣數算自己的日子，好叫我們得著智慧的心。時間係禮物，會用完。暑假最易無啦啦過咗。智慧人為日子排序：神、人、休息、玩、工作。今晚一齊寫作息。"},
+  {n:43,date:"2027-07-10",title:"財寶在哪裡",scripture:"馬太福音 6:19–21",verse:"太 5:16",song:"奉獻短詩",q8:"若有十個硬幣你會點分？",q11:"你最近好想買嘅，係需要定想要？",meeting:"零用錢三罐。",story:"唔好為自己積攢財寶在地上，地上有蟲子咬，有賊挖窟窿。要積攢財寶在天上。因為你的財寶在哪裡，你的心也在哪裡。錢會顯露心。好管家：給神、儲、用、同人分享。小朋友從零用錢已經學得識。"},
+  {n:44,date:"2027-07-17",title:"做在最小的身上",scripture:"馬太福音 25:34–40",verse:"太 5:16",song:"到山上去",q8:"邊種人係最小的？",q11:"你做善事時有冇想過被看見？",meeting:"家庭服事日細節。",story:"王話：你哋做在我這弟兄中一個最小的身上，就係做在我身上。餓嘅俾食、渴嘅俾飲、作客旅嘅留宿、赤身嘅俾穿、病咗探佢、坐監嘅去見佢。服事耶穌，往往係服事又餓又無名嘅人。做完唔好自誇。"},
+  {n:45,date:"2027-07-24",title:"耶和華拯救",scripture:"撒母耳記上 17",verse:"書 1:9",song:"靠主常喜樂",q8:"你的歌利亞係咩？",q11:"你有冇穿過別人的盔甲？",meeting:"勇敢清單。",story:"非利士人歌利亞又高又惡，以色列軍隊驚。大衛只係放羊細路，但話耶和華拯救唔係用刀槍。佢唔著掃羅嗰套太大盔甲，只用熟識嘅甩石。一石打倒巨人。勇氣唔係唔怕，係怕仍然順服。用你自己嘅石頭。"},
+  {n:46,date:"2027-07-31",title:"舌頭的能力",scripture:"雅各書 3:5–10",verse:"書 1:9",song:"求主潔淨我口",q8:"有句說話入過你心，好痛或好暖？",q11:"網上留言同當面講，責任有分別嗎？",meeting:"言語約章。",story:"舌頭係小火，能燒起最大的樹林。同一張口讚美神，又咒詛人，呢啲不應該。嘲笑、改外號、講是非會拆屋企。口可以傷害，亦都可以醫治。本週禁嘲笑。講錯就即刻修復。"},
+  {n:47,date:"2027-08-07",title:"朋友的傷口是出於忠誠",scripture:"箴言 17:17；18:24",verse:"書 1:9",song:"何等恩友",q8:"好朋友會做咩？",q11:"朋友叫你隱瞞父母，仲算唔算朋友？",meeting:"朋友圈紅線。",story:"朋友乃時常親愛，弟兄為患難而生。濫交朋友的，自取敗壞；但有一朋友比弟兄更親密。真朋友喺你難嗰陣仍在。酒肉朋友多，忠心朋友少。揀朋友好重要，自己都要成為那樣的朋友。"},
+  {n:48,date:"2027-08-14",title:"失敗之後還能跟",scripture:"路加福音 22；約翰福音 21",verse:"書 1:9",song:"主你有恩典",q8:"你試過好羞、唔想見人嗎？",q11:"人恢復你嗰陣，你需要聽到邊句？",meeting:"考壞唔羞辱，一齊檢討。",story:"彼得三次話：我唔認識嗰個人。雞叫，佢就出去哭。復活之後，耶穌喺海邊三次問：你愛我嗎？跟住話：你餵養我的羊。失敗唔係開除。拒絕返嚟先係。耶穌用愛恢復人，唔用羞辱。"},
+  {n:49,date:"2027-08-21",title:"去，使萬民作門徒",scripture:"馬太福音 28:16–20",verse:"書 1:9",song:"到萬國去",q8:"你可請邊個朋友嚟教會？",q11:"傳福音同強迫人信有咩分別？",meeting:"邀請名單。",story:"耶穌話：天上地下所有的權柄都賜俾我了。所以你哋要去，使萬民作我的門徒，奉父子聖靈的名為他們施洗，凡我所吩咐你哋的，都教訓他們遵守。我就常與你哋同在。小朋友的工場首先係學校同親戚。"},
+  {n:50,date:"2027-08-28",title:"得安息",scripture:"出埃及記 20:8–11；馬可福音 6:31",verse:"書 1:9",song:"耶穌恩友",q8:"休息係唔係浪費時間？",q11:"屋企邊日最唔安息？",meeting:"安息時段同開學準備。",story:"當記念安息日，守為聖日。六日要勞碌做你一切的工。耶穌都對門徒講：你哋來，同我私下到曠野休息一下。因為來往的人多，連吃飯都冇時間。安息係命令，唔係懶惰。學識停，先至學識跑。"},
+  {n:51,date:"2027-09-04",title:"專心仰賴耶和華",scripture:"箴言 3:5–6",verse:"箴 3:5–6",song:"交託",q8:"新學年你期待同擔心邊樣？",q11:"計劃同倚靠可以一齊存在嗎？",meeting:"新學年時間表唔好塞爆。",story:"你要專心仰賴耶和華，不可倚靠自己的聰明。在你一切所行的事上都要認定祂，祂必指引你的路。新老師、新同學、新壓力：先仰賴，再計劃。父母的時間表都要交託，唔好以為自己好叻就可以安排一切。"},
+  {n:52,date:"2027-09-11",title:"至於我和我家",scripture:"約書亞記 24:14–15",verse:"書 24:15 下",song:"耶穌愛我",q8:"呢一年你記得邊一晚？",q11:"下一年想保留咩、改咩？",meeting:"慶祝、簽名、寫下一年主題。",story:"約書亞對百姓講：今日就要揀定，你哋要事奉邊個。至於我和我家，我們必定事奉耶和華。一年完唔係畢業，係再簽一年。家可以作決定：我哋跟邊個。今晚一齊講呢句，父母祝福每個孩子。"}
+];
+
+const NOTE = {C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99};
+const TUNES = {
+  jesusLovesMe: "G4:1 E4:1 E4:1 D4:1 E4:1 G4:1 G4:2 A4:1 A4:1 C5:1 A4:1 G4:2 G4:1 E4:1 E4:1 D4:1 E4:1 G4:1 G4:2 A4:1 G4:1 E4:1 D4:1 C4:2 D4:1 D4:1 D4:1 D4:1 A4:1 A4:2 G4:1 E4:1 G4:1 A4:2 G4:1 E4:1 E4:1 D4:1 E4:1 G4:1 G4:2 A4:1 G4:1 E4:1 D4:1 C4:3",
+  amazingGrace: "D4:1 G4:2 B4:1 G4:2 B4:1 A4:2 G4:1 E4:2 D4:2 G4:2 B4:1 D5:2 D5:1 B4:2 G4:1 E4:2 D4:2 G4:2 B4:1 G4:2 B4:1 A4:2 G4:1 E4:2 D4:2 G4:2 B4:1 D5:2 B4:1 A4:2 G4:4",
+  thisLittleLight: "G4:1 G4:1 A4:1 G4:1 E4:1 G4:2 G4:1 G4:1 A4:1 G4:1 E4:1 D4:2 G4:1 G4:1 A4:1 G4:1 E4:1 G4:2 D4:1 D4:1 E4:1 D4:1 B3:1 A4:1 G4:3",
+  joyToTheWorld: "C5:2 B4:1 A4:1 G4:3 F4:1 E4:2 D4:2 C4:3 G4:1 A4:3 A4:1 B4:3 B4:1 C5:3 C5:1 C5:1 B4:1 A4:1 G4:1 G4:1 F4:1 E4:1 C5:1 C5:1 B4:1 A4:1 G4:1 G4:1 F4:1 E4:1 E4:1 E4:1 E4:1 E4:1 E4:1 F4:1 G4:3 F4:1 E4:1 D4:1 D4:1 D4:1 D4:1 E4:1 F4:3 E4:1 D4:1 C4:1 C5:2 G4:1 G4:1 E4:1 E4:1 C4:3",
+  oCome: "G4:2 D4:1 G4:2 A4:1 B4:3 C5:1 B4:2 A4:1 G4:3 G4:2 D4:1 G4:2 A4:1 B4:3 C5:1 B4:2 A4:1 G4:4",
+  whatAFriend: "C4:1 E4:1 G4:1 A4:1 G4:1 E4:1 C4:2 D4:1 F4:1 A4:1 G4:1 E4:1 D4:2 C4:1 E4:1 G4:1 A4:1 G4:1 E4:1 C4:2 D4:1 C4:1 E4:1 D4:1 C4:3",
+  blessedAssurance: "C4:1 E4:1 G4:2 G4:1 A4:1 G4:2 E4:1 D4:1 C4:2 E4:1 G4:1 C5:2 A4:1 G4:3",
+  mightyFortress: "C4:2 C4:1 D4:1 E4:2 E4:1 F4:1 G4:3 G4:1 A4:1 G4:1 F4:1 E4:2 D4:1 C4:3",
+  silentNight: "G4:2 A4:1 G4:2 E4:3 G4:2 A4:1 G4:2 E4:3 D5:3 B4:2 C5:3 G4:3",
+  weThreeKings: "B4:2 A4:1 G4:2 E4:1 D4:2 G4:1 A4:2 B4:1 A4:2 G4:3",
+  familyCall: "E4:1 G4:1 A4:1 G4:2 E4:1 D4:1 E4:2 G4:1 A4:1 C5:2 A4:1 G4:3 E4:1 G4:1 A4:1 G4:1 E4:1 D4:1 C4:3"
+};
+TUNES.thisLittleLight = TUNES.thisLittleLight.replace("B3:1","G4:1");
+
+const SONG_TUNE = {
+  "耶穌愛我": "jesusLovesMe",
+  "這小燈光": "thisLittleLight",
+  "普世歡騰": "joyToTheWorld",
+  "馬槽歌": "silentNight",
+  "齊來崇拜": "oCome",
+  "三博士": "weThreeKings",
+  "奇異恩典": "amazingGrace",
+  "堅固保障": "mightyFortress",
+  "何等恩友": "whatAFriend",
+  "耶穌恩友": "whatAFriend",
+  "有福的確據": "blessedAssurance"
+};
+
+const KEYS = ["C4","D4","E4","F4","G4","A4","B4","C5","D5","E5"];
+const $ = (id) => document.getElementById(id);
+let weekN = 1, lit = false, audioCtx = null, playing = false;
+let nightLeft = 45 * 60, segLeft = 4 * 60, timerOn = false, nightOn = false, tickId = null;
+let meetStep = "thanks";
+let thanksWho = "fung";
+
+function currentWeek() {
+  const start = Date.UTC(2026, 8, 19);
+  const now = new Date();
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.floor((today - start) / 604800000);
+  if (diff < 0) return 1;
+  if (diff >= 52) return 52;
+  return diff + 1;
+}
+function doneSet() {
+  try { return new Set(JSON.parse(localStorage.getItem("fw-done") || "[]")); }
+  catch { return new Set(); }
+}
+function saveDone(set) { localStorage.setItem("fw-done", JSON.stringify([...set])); }
+function roles(n) {
+  const hosts = [
+    {worship:"鋒", meeting:"恩", pray:"恩"},
+    {worship:"恩", meeting:"鋒", pray:"鋒"},
+    {worship:"姐姐（家長旁輔）", meeting:"恩", pray:"姐姐"},
+    {worship:"鋒", meeting:"姐姐（紀錄）", pray:"弟弟（家長補完）"}
+  ][(n - 1) % 4];
+  return {
+    ...hosts,
+    song: n % 2 === 1 ? "鋒" : "恩",
+    read: n % 2 === 1 ? "姐姐讀主經文，弟弟讀金句" : "弟弟讀短段，姐姐讀金句"
+  };
+}
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.style.display = "block";
+  setTimeout(() => t.style.display = "none", 2200);
+}
+function pickVoice() {
+  const voices = speechSynthesis.getVoices();
+  const sel = $("voiceSel");
+  const keep = sel.value;
+  sel.innerHTML = "";
+  const ranked = [...voices].sort((a, b) => scoreVoice(b) - scoreVoice(a));
+  ranked.forEach((v) => {
+    const o = document.createElement("option");
+    o.value = v.name;
+    o.textContent = `${v.name} (${v.lang})`;
+    sel.appendChild(o);
+  });
+  if ([...sel.options].some((o) => o.value === keep)) sel.value = keep;
+  else if (ranked[0]) sel.value = ranked[0].name;
+}
+function scoreVoice(v) {
+  const n = (v.name + v.lang).toLowerCase();
+  let s = 0;
+  if (n.includes("hk") || n.includes("hong kong") || n.includes("yue") || n.includes("cantonese") || n.includes("hiu") || n.includes("tracy")) s += 50;
+  if (n.includes("zh-hk")) s += 40;
+  if (n.includes("zh-tw") || n.includes("hanhan") || n.includes("meijia")) s += 20;
+  if (n.includes("zh")) s += 8;
+  if (v.localService) s += 3;
+  return s;
+}
+function speak(text, who) {
+  stopAll(false);
+  const parts = text.split(/(?<=[。！？!?])/).map((s) => s.trim()).filter(Boolean);
+  const box = $("script");
+  let i = 0;
+  const voiceName = $("voiceSel").value;
+  const voice = speechSynthesis.getVoices().find((v) => v.name === voiceName);
+  const rate = Number($("rateSel").value);
+  markWho(who, "talking");
+  const next = () => {
+    if (i >= parts.length) { clearWho(); return; }
+    const sentence = parts[i];
+    box.innerHTML = parts.map((p, idx) => idx === i ? `<span class="now">${p}</span>` : p).join("");
+    const u = new SpeechSynthesisUtterance(sentence);
+    u.lang = (voice && voice.lang) || "zh-HK";
+    if (voice) u.voice = voice;
+    u.rate = rate;
+    u.pitch = who === "bro" ? 1.15 : who === "sis" ? 1.08 : 1;
+    u.onend = () => { i += 1; next(); };
+    u.onerror = () => { i += 1; next(); };
+    speechSynthesis.speak(u);
+  };
+  next();
+}
+function markWho(who, cls) {
+  clearWho();
+  const map = {fung:"pFung", yan:"pYan", sis:"pSis", bro:"pBro"};
+  const el = $(map[who]);
+  if (el) { el.classList.add("active", cls); }
+}
+function clearWho() {
+  document.querySelectorAll(".person").forEach((p) => p.classList.remove("active","talking","singing"));
+}
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function playTune(name) {
+  stopAll(false);
+  const ctx = ensureAudio();
+  const encoded = TUNES[name] || TUNES.familyCall;
+  const notes = encoded.split(" ").map((tok) => {
+    const [n, b] = tok.split(":");
+    return { freq: NOTE[n] || 392, beats: Number(b) };
+  });
+  const beat = 0.32;
+  let t = ctx.currentTime + 0.05;
+  playing = true;
+  notes.forEach((note, idx) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "triangle";
+    osc.frequency.value = note.freq;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.12, t + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + note.beats * beat);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + note.beats * beat + 0.02);
+    const keyName = Object.keys(NOTE).find((k) => Math.abs(NOTE[k] - note.freq) < 1);
+    const delay = (t - ctx.currentTime) * 1000;
+    setTimeout(() => lightKey(keyName, note.beats * beat * 1000), Math.max(0, delay));
+    t += note.beats * beat;
+  });
+  setTimeout(() => { if (playing) playing = false; }, (t - ctx.currentTime) * 1000);
+}
+function lightKey(name, ms) {
+  const i = KEYS.indexOf(name);
+  if (i < 0) return;
+  const el = document.querySelectorAll("#piano .key")[i];
+  if (!el) return;
+  el.classList.add("on");
+  setTimeout(() => el.classList.remove("on"), ms);
+}
+function stopAll(clearText) {
+  speechSynthesis.cancel();
+  playing = false;
+  if (audioCtx) {
+    audioCtx.close();
+    audioCtx = null;
+  }
+  clearWho();
+  if (clearText !== false) {}
+}
+function ytSrc(song) {
+  if (YT[song]) return `https://www.youtube-nocookie.com/embed/${YT[song]}?rel=0&modestbranding=1`;
+  return `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(song + " 詩歌 兒童")}`;
+}
+
+const MEET = [
+  { id: "thanks", name: "1 感謝圈", sec: 240, read: "感謝圈開始。鋒、恩、姐姐、弟弟輪流講一句具體嘅多謝。其他人只聽，唔插嘴。" },
+  { id: "temp", name: "2 溫度計", sec: 180, read: "溫度計唔係考勤。每人報一到五分，講呢週心有幾滿、幾攰。一至兩分嘅人，其他人只問：要聽，定要幫手。唔教訓。" },
+  { id: "rules", name: "3 家規", sec: 120, read: "家規係呢四十五分鐘點樣對待對方。一、準時開始。二、手機入盒，連家長。三、一次一個人講。四、唔准嘲笑、翻舊帳。五、細路可以話呢件下週或私下講。六、認錯：對唔住，我做錯咗，下次我會改。對方答：我原諒你。七、散會前父母一定祝福。" },
+  { id: "topic", name: "4 本週一項", sec: 300, read: "" },
+  { id: "cal", name: "5 下週行程", sec: 240, read: "而家排下週。問主日、邊個接放學、有冇測驗、生日、探訪、一齊食飯。寫低月曆。" },
+  { id: "pray", name: "6 代禱祝福", sec: 120, read: "揀兩至三項代禱：溫度計低分嘅人、下週最擔心嗰件、學校或教會。之後父母按膊頭祝福。" }
+];
+const THANKS_CHIPS = ["神嘅看顧","一餐好味","平安返屋企","煮飯／接放學","陪玩","溫柔語氣","分享／幫忙","講真話","和好","老師／同學","學識新嘢","瞓得好","有得玩","教會","嘈完都有人聽"];
+const RULES = [
+  "準時。21:00 開始；遲到唔使道歉演講，坐下就接上。",
+  "手機、平板放入盒子，連家長都係。",
+  "一次得一個人講。其他人聽完先回應。",
+  "唔准嘲笑、翻舊帳、用會議攻擊人。",
+  "細路有權講「我唔想講呢件」，改下週或私下同父母講。",
+  "認錯：「對唔住，我 ___，下次我會 ___。」對方：「我原諒你。」",
+  "散會前父母一定祝福，即使嗰週好亂。"
+];
+const PEOPLE = [
+  { id: "fung", name: "鋒" },
+  { id: "yan", name: "恩" },
+  { id: "sis", name: "姐姐" },
+  { id: "bro", name: "弟弟" }
+];
+
+function fmt(sec) {
+  const s = Math.max(0, sec);
+  return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+}
+function paintClocks() {
+  const n = $("clockNight");
+  const g = $("clockSeg");
+  n.textContent = fmt(nightLeft);
+  g.textContent = fmt(segLeft);
+  n.className = "clock" + (nightLeft <= 0 ? " over" : nightLeft <= 300 ? " warn" : "");
+  g.className = "clock" + (segLeft <= 0 ? " over" : segLeft <= 30 ? " warn" : "");
+}
+function beep() {
+  try {
+    const ctx = ensureAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.value = 880;
+    osc.type = "sine";
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.36);
+  } catch (e) {}
+}
+function startTick() {
+  if (tickId) return;
+  tickId = setInterval(() => {
+    if (nightOn) {
+      if (nightLeft > 0) nightLeft -= 1;
+      if (nightLeft === 0) { nightOn = false; beep(); toast("全晚 45 分鐘到。寫低未完嘅，祝福後熄燈。"); }
+    }
+    if (timerOn) {
+      if (segLeft > 0) segLeft -= 1;
+      if (segLeft === 0) { timerOn = false; beep(); toast("呢段時間到。未講完寫低，去下一段。"); }
+    }
+    if (!nightOn && !timerOn) { clearInterval(tickId); tickId = null; }
+    paintClocks();
+  }, 1000);
+}
+function meetNotes() {
+  try { return JSON.parse(localStorage.getItem("fw-meet-" + weekN) || "{}"); }
+  catch { return {}; }
+}
+function saveMeet(data) {
+  localStorage.setItem("fw-meet-" + weekN, JSON.stringify(data));
+}
+function updateMeetField(key, val) {
+  const data = meetNotes();
+  data[key] = val;
+  saveMeet(data);
+}
+function setMeetStep(id, startSeg) {
+  meetStep = id;
+  const step = MEET.find((s) => s.id === id);
+  segLeft = step.sec;
+  $("segLabel").textContent = "本段：" + step.name;
+  document.querySelectorAll("#meetSteps button").forEach((b) => b.classList.toggle("on", b.dataset.id === id));
+  document.querySelectorAll("#timerPresets button").forEach((b) => b.classList.toggle("on", b.dataset.kind === id));
+  renderMeetPanel();
+  if (startSeg) {
+    timerOn = true;
+    startTick();
+  }
+  paintClocks();
+}
+function renderMeetPanel() {
+  const w = WEEKS[weekN - 1];
+  const data = meetNotes();
+  const box = $("meetPanel");
+  if (meetStep === "thanks") {
+    box.innerHTML = `
+      <h3>感謝圈 · 4 分鐘</h3>
+      <div class="why">每人一句，要具體。其他人只聽，唔插嘴、唔糾正。卡住就問：「呢週邊件小事令你覺得被愛？」</div>
+      <div class="chips">${THANKS_CHIPS.map((c) => `<button type="button" data-chip="${c}">${c}</button>`).join("")}</div>
+      <p class="meta">先撳其中一個人嘅格，再撳上面建議，就會填入。順序：鋒 → 恩 → 姐姐 → 弟弟。</p>
+      <div class="people-grid">
+        ${PEOPLE.map((p) => `<div class="person-note"><label>${p.name}</label><textarea data-k="thanks-${p.id}" placeholder="多謝……">${data["thanks-"+p.id] || ""}</textarea></div>`).join("")}
+      </div>`;
+  } else if (meetStep === "temp") {
+    box.innerHTML = `
+      <h3>溫度計 · 3 分鐘</h3>
+      <div class="why"><b>作用：</b>唔係考勤，唔係評分。用 1–5 分讓全家知道你呢週心幾滿、幾攰。<b>1–2 分</b>只問「要聽定要幫手」，唔教訓、唔翻舊帳、唔比較兄弟姊妹。分數低唔等於唔乖。1 分嘅週，其他議程可以縮，散會後父母私下陪。</div>
+      ${PEOPLE.map((p) => {
+        const v = Number(data["temp-"+p.id] || 0);
+        return `<div class="person-note"><label>${p.name} ${v ? v+" 分" : ""}</label>
+          <div class="temps">${[1,2,3,4,5].map((n) => `<button type="button" data-temp="${p.id}" data-n="${n}" class="${v===n?"on"+n:""}">${n}</button>`).join("")}</div>
+          <textarea data-k="tempnote-${p.id}" placeholder="想講可以寫；唔想講就空">${data["tempnote-"+p.id] || ""}</textarea></div>`;
+      }).join("")}`;
+  } else if (meetStep === "rules") {
+    box.innerHTML = `
+      <h3>家規 · 2 分鐘</h3>
+      <div class="why"><b>家規係乜：</b>呢個 45 分鐘裡面，我哋點樣對待對方嘅約。每週都讀，唔係只讀第一週。令細路記得「呢度安全」。</div>
+      <ul class="rules">${RULES.map((r, i) => `<li><input type="checkbox" data-rule="${i}" ${data["rule-"+i] ? "checked" : ""}><span>${i+1}. ${r}</span></li>`).join("")}</ul>`;
+  } else if (meetStep === "topic") {
+    box.innerHTML = `
+      <h3>本週一項 · 5 分鐘</h3>
+      <div class="why">只討論呢一項。唔開第二戰場。時間到就停。</div>
+      <div class="why"><b>今晚題目：</b>${w.meeting}</div>
+      <textarea data-k="topic" placeholder="議決／未完要跟">${data.topic || ""}</textarea>`;
+  } else if (meetStep === "cal") {
+    const fields = [
+      ["sun", "主日崇拜／主日學"],
+      ["pickup", "一至五接放學／興趣班"],
+      ["school", "功課、測驗、呈分"],
+      ["visit", "生日、探訪、教會活動"],
+      ["fun", "家庭一齊食／玩"],
+      ["sleep", "邊晚要早瞓、特別事項"]
+    ];
+    box.innerHTML = `
+      <h3>下週行程 · 4 分鐘</h3>
+      <div class="why">問齊先寫月曆。邊個接、邊個遲到、有冇衝突，而家講明。</div>
+      <div class="cal-grid">${fields.map(([k, lab]) => `<div class="person-note"><label>${lab}</label><textarea data-k="cal-${k}">${data["cal-"+k] || ""}</textarea></div>`).join("")}</div>`;
+  } else {
+    box.innerHTML = `
+      <h3>代禱＋祝福 · 2 分鐘</h3>
+      <div class="why">揀 2–3 項出聲求就夠：溫度計低分嘅人、下週最擔心、學校或教會。之後父母按膊頭祝福，熄燈。</div>
+      <div class="cal-grid">
+        <div class="person-note"><label>為邊個求</label><textarea data-k="pray-who">${data["pray-who"] || ""}</textarea></div>
+        <div class="person-note"><label>下週最擔心</label><textarea data-k="pray-worry">${data["pray-worry"] || ""}</textarea></div>
+        <div class="person-note"><label>學校／朋友</label><textarea data-k="pray-school">${data["pray-school"] || ""}</textarea></div>
+        <div class="person-note"><label>教會／未信的人</label><textarea data-k="pray-church">${data["pray-church"] || ""}</textarea></div>
+      </div>`;
+  }
+  box.querySelectorAll("textarea[data-k]").forEach((t) => {
+    t.addEventListener("input", () => updateMeetField(t.dataset.k, t.value));
+  });
+  box.querySelectorAll("[data-chip]").forEach((b) => {
+    b.onclick = () => {
+      const key = "thanks-" + thanksWho;
+      const cur = (meetNotes()[key] || "").trim();
+      const next = cur ? cur + "；" + b.dataset.chip : b.dataset.chip;
+      updateMeetField(key, next);
+      renderMeetPanel();
+    };
+  });
+  box.querySelectorAll("textarea[data-k^='thanks-']").forEach((t) => {
+    t.addEventListener("focus", () => { thanksWho = t.dataset.k.replace("thanks-", ""); });
+  });
+  box.querySelectorAll("[data-temp]").forEach((b) => {
+    b.onclick = () => {
+      updateMeetField("temp-" + b.dataset.temp, Number(b.dataset.n));
+      renderMeetPanel();
+    };
+  });
+  box.querySelectorAll("[data-rule]").forEach((c) => {
+    c.onchange = () => updateMeetField("rule-" + c.dataset.rule, c.checked);
+  });
+}
+function render() {
+  const w = WEEKS[weekN - 1];
+  const r = roles(weekN);
+  $("title").textContent = `第 ${w.n} 週 · ${w.title}`;
+  $("meta").textContent = `${w.date}　星期六 21:00　·　經文 ${w.scripture}　·　詩歌《${w.song}》`;
+  $("weekSel").value = String(weekN);
+  $("jobFung").textContent = r.song === "鋒" ? "今晚領詩" : "聽詩";
+  $("jobYan").textContent = r.song === "恩" ? "今晚領詩" : "聽詩";
+  $("jobSis").textContent = weekN % 2 === 1 ? "讀主經文" : "讀金句";
+  $("jobBro").textContent = weekN % 2 === 1 ? "讀金句" : "讀短段";
+  $("pFung").classList.toggle("active", r.song === "鋒");
+  $("pYan").classList.toggle("active", r.song === "恩");
+  $("script").textContent = `今晚詩歌係《${w.song}》。金句：${VERSES[w.verse]}`;
+  $("yt").src = ytSrc(w.song);
+  $("side").innerHTML = `
+    <p><b>領詩</b> ${r.song}<br><b>讀經</b> ${r.read}</p>
+    <p><b>崇拜主持</b> ${r.worship}<br><b>會議主持</b> ${r.meeting}<br><b>結束禱告</b> ${r.pray}</p>`;
+  $("qBox").innerHTML = `<b>崇拜討論</b><br>8歲：${w.q8}<br>11歲：${w.q11}`;
+  $("meetSteps").innerHTML = MEET.map((s) => `<button type="button" data-id="${s.id}">${s.name}</button>`).join("");
+  $("meetSteps").querySelectorAll("button").forEach((b) => {
+    b.onclick = () => {
+      setMeetStep(b.dataset.id, true);
+      $("meetboard").scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+  });
+  renderMeetPanel();
+  document.querySelectorAll("#meetSteps button").forEach((b) => b.classList.toggle("on", b.dataset.id === meetStep));
+  document.querySelectorAll("#weekbar .dot").forEach((d) => {
+    d.classList.toggle("here", Number(d.dataset.n) === weekN);
+  });
+  localStorage.setItem("fw-week", String(weekN));
+  paintClocks();
+}
+function build() {
+  KEYS.forEach(() => {
+    const k = document.createElement("div");
+    k.className = "key";
+    $("piano").appendChild(k);
+  });
+  const sel = $("weekSel");
+  const bar = $("weekbar");
+  const done = doneSet();
+  WEEKS.forEach((w) => {
+    const o = document.createElement("option");
+    o.value = String(w.n);
+    o.textContent = `第 ${w.n} 週 ${w.date.slice(5)} · ${w.title}`;
+    sel.appendChild(o);
+    const d = document.createElement("button");
+    d.className = "dot" + (done.has(w.n) ? " done" : "");
+    d.dataset.n = w.n;
+    d.textContent = w.n;
+    d.title = w.title;
+    d.onclick = () => { weekN = w.n; render(); };
+    bar.appendChild(d);
+  });
+  weekN = Number(localStorage.getItem("fw-week")) || currentWeek();
+  render();
+}
+
+$("lampBtn").onclick = () => {
+  lit = !lit;
+  $("stage").classList.toggle("lit", lit);
+  ensureAudio();
+  toast(lit ? "燈亮啦，手機入盒。全晚 45 分鐘開始計。" : "燈熄，今晚祝福完可以瞓。");
+  if (lit) {
+    nightOn = true;
+    startTick();
+    speak("燈亮啦。手機放入盒子。我哋一齊開始家庭崇拜。", roles(weekN).song === "鋒" ? "fung" : "yan");
+  } else {
+    nightOn = false;
+    timerOn = false;
+  }
+};
+$("btnSong").onclick = () => {
+  if (!lit) $("lampBtn").click();
+  const w = WEEKS[weekN - 1];
+  const who = roles(weekN).song === "鋒" ? "fung" : "yan";
+  markWho(who, "singing");
+  $("script").textContent = `${roles(weekN).song}領詩：《${w.song}》。鋼琴伴奏開始，跟住一齊唱。下面有合唱 MV。`;
+  playTune(SONG_TUNE[w.song] || "familyCall");
+};
+$("btnVerse").onclick = () => {
+  const w = WEEKS[weekN - 1];
+  const who = weekN % 2 === 1 ? "bro" : "sis";
+  const text = `金句，${w.verse}。${VERSES[w.verse]}。我哋再讀一次。${VERSES[w.verse]}`;
+  speak(text, who);
+};
+$("btnStory").onclick = () => {
+  const w = WEEKS[weekN - 1];
+  const who = weekN % 2 === 1 ? "sis" : "bro";
+  speak(`今日經文喺${w.scripture}。${w.story}`, who);
+};
+$("btnCustom").onclick = () => {
+  const text = $("custom").value.trim();
+  if (!text) { toast("先貼經文再讀。"); return; }
+  const who = weekN % 2 === 1 ? "sis" : "bro";
+  speak(text, who);
+};
+$("btnStop").onclick = () => { stopAll(); $("yt").src = ytSrc(WEEKS[weekN-1].song); };
+$("btnDone").onclick = () => {
+  const set = doneSet();
+  set.add(weekN);
+  saveDone(set);
+  document.querySelector(`#weekbar .dot[data-n="${weekN}"]`).classList.add("done");
+  speak("多謝主。願耶和華賜福俾你，保護你。願你今晚瞓得安樂。阿們。", roles(weekN).pray.includes("恩") ? "yan" : "fung");
+  toast("本週完成，父母按膊頭祝福，然後熄燈。");
+};
+$("weekSel").onchange = (e) => { weekN = Number(e.target.value); render(); };
+document.querySelectorAll(".pill").forEach((p) => {
+  p.onclick = () => {
+    document.querySelectorAll(".pill").forEach((x) => x.classList.remove("on"));
+    p.classList.add("on");
+    const step = p.dataset.step;
+    if (step === "song") $("btnSong").click();
+    if (step === "verse") $("btnVerse").click();
+    if (step === "story") $("btnStory").click();
+    if (step === "talk") $("script").innerHTML = `<b>討論</b><br>8歲：${WEEKS[weekN-1].q8}<br>11歲：${WEEKS[weekN-1].q11}`;
+    if (step === "meet") {
+      setMeetStep("thanks", true);
+      $("meetboard").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+});
+$("btnTimer").onclick = () => {
+  if (!nightOn && nightLeft > 0) nightOn = true;
+  timerOn = true;
+  startTick();
+  toast("計時開始。");
+};
+$("btnTimerPause").onclick = () => {
+  timerOn = false;
+  nightOn = false;
+  toast("已暫停。");
+};
+$("btnTimerReset").onclick = () => {
+  timerOn = false;
+  nightOn = false;
+  nightLeft = 45 * 60;
+  const step = MEET.find((s) => s.id === meetStep);
+  segLeft = step ? step.sec : 240;
+  paintClocks();
+  toast("已重設。");
+};
+document.querySelectorAll("#timerPresets button").forEach((b) => {
+  b.onclick = () => {
+    document.querySelectorAll("#timerPresets button").forEach((x) => x.classList.remove("on"));
+    b.classList.add("on");
+    const sec = Number(b.dataset.sec);
+    const kind = b.dataset.kind;
+    if (kind === "night") { nightLeft = sec; nightOn = true; startTick(); }
+    else if (kind === "worship") { segLeft = sec; $("segLabel").textContent = "本段：家庭崇拜"; timerOn = true; startTick(); }
+    else if (kind === "meet") { segLeft = sec; $("segLabel").textContent = "本段：家庭會議 20 分鐘"; timerOn = true; startTick(); }
+    else { setMeetStep(kind, true); $("meetboard").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    paintClocks();
+  };
+});
+$("btnMeetRead").onclick = () => {
+  const step = MEET.find((s) => s.id === meetStep);
+  let text = step.read;
+  if (meetStep === "topic") text = "本週只討論呢一項。" + WEEKS[weekN - 1].meeting;
+  const host = roles(weekN).meeting.includes("鋒") ? "fung" : roles(weekN).meeting.includes("女兒") || roles(weekN).meeting.includes("姐姐") ? "sis" : "yan";
+  speak(text, host);
+};
+
+speechSynthesis.onvoiceschanged = pickVoice;
+pickVoice();
+build();
+</script>
+</body>
+</html>
