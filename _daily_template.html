@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>每日讀經 · 一家同行</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --night: #1a120e;
+    --lamp: #f0b14a;
+    --coral: #d4653a;
+    --leaf: #3f6d52;
+    --ink: #2a1c14;
+    --muted: #6d5646;
+    --cream: #fff8ea;
+    --paper: #f6ead2;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: "Noto Sans TC", sans-serif;
+    color: var(--paper);
+    background: radial-gradient(ellipse 80% 50% at 50% -10%, #3b2a18 0%, transparent 55%), var(--night);
+  }
+  button, select { font-family: inherit; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 18px 80px; }
+  h1 { font-family: Fraunces, serif; font-size: 28px; margin: 0 0 4px; }
+  .sub { color: #cbb49a; font-size: 14px; }
+  header { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+  .stats { display: flex; gap: 16px; margin: 16px 0 8px; }
+  .stat { background: #2a1c14; border: 2px solid #5a3b28; border-radius: 16px; padding: 10px 14px; min-width: 88px; }
+  .stat b { display: block; font-family: Fraunces, serif; font-size: 22px; color: var(--lamp); }
+  .stat span { font-size: 12px; color: #cbb49a; }
+  .bar { height: 8px; background: #4a3428; border-radius: 99px; overflow: hidden; margin: 8px 0 16px; }
+  .bar i { display: block; height: 100%; background: var(--leaf); width: 0; }
+  .card { background: var(--cream); color: var(--ink); border-radius: 22px; padding: 18px; }
+  .card h2 { font-family: Fraunces, serif; font-size: 22px; margin: 0 0 6px; }
+  .meta { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+  .ref {
+    display: inline-block; background: #efe0c4; border-radius: 999px;
+    padding: 4px 10px; font-weight: 700; font-size: 13px; margin: 4px 0 10px;
+  }
+  .tip { font-size: 16px; line-height: 1.7; margin: 8px 0 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .big {
+    border: 0; border-radius: 16px; padding: 12px 16px; cursor: pointer; font-weight: 700;
+    font-size: 15px; color: #fff;
+  }
+  .tick { background: var(--leaf); }
+  .tick.on { background: var(--coral); }
+  .ghost { background: #5c4638; }
+  .read { background: #355c7d; }
+  .who { display: flex; gap: 6px; margin: 8px 0 12px; }
+  .who button {
+    border: 0; background: #efe0c4; color: var(--ink); border-radius: 999px;
+    padding: 6px 12px; cursor: pointer;
+  }
+  .who button.on { background: #355c7d; color: #fff; }
+  .nav { display: flex; justify-content: space-between; gap: 8px; margin-top: 16px; }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+  .cal b { text-align: center; font-size: 11px; color: var(--muted); }
+  .day {
+    aspect-ratio: 1; border: 0; border-radius: 10px; background: #efe0c4; color: var(--ink);
+    cursor: pointer; font-size: 13px;
+  }
+  .day.done { background: var(--leaf); color: #fff; }
+  .day.today { outline: 2px solid var(--coral); }
+  .day.mute { opacity: 0.35; }
+  .month-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; }
+  .month-nav h3 { font-family: Fraunces, serif; margin: 0; font-size: 18px; }
+  .link { color: var(--coral); }
+  .toast {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: #fff8ea; color: var(--ink); padding: 10px 16px; border-radius: 999px;
+    display: none; z-index: 9;
+  }
+  .sat { background: #fff3d6; border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+  .scripture { margin: 12px 0 14px; }
+  .pass {
+    background: #fff; border: 1px solid #ead7b8; border-radius: 16px;
+    padding: 12px 14px 8px; margin-bottom: 10px;
+  }
+  .pass-head { font-weight: 700; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .verses { font-size: 17px; line-height: 1.85; }
+  .verses .v { margin: 0 0 10px; }
+  .verses .n {
+    display: inline-block; min-width: 1.3em; color: var(--coral);
+    font-weight: 700; font-size: 13px; margin-right: 4px;
+  }
+  .verses .miss { color: var(--muted); font-size: 14px; }
+  .copy { font-size: 11px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>每日讀經</h1>
+      <div class="sub">鋒、恩同姐姐、弟弟 · 一日一小段 · 讀完就 tick</div>
+    </div>
+    <a class="sub link" href="index.html">星期六晚劇場</a>
+  </header>
+  <div class="stats">
+    <div class="stat"><b id="doneN">0</b><span>已讀日數</span></div>
+    <div class="stat"><b id="streak">0</b><span>連續日數</span></div>
+    <div class="stat"><b>365</b><span>全年日子</span></div>
+  </div>
+  <div class="bar"><i id="bar"></i></div>
+
+  <article class="card" id="todayCard">
+    <div class="meta" id="meta"></div>
+    <h2 id="title"></h2>
+    <div class="ref" id="ref"></div>
+    <div class="scripture" id="scripture"></div>
+    <p class="tip" id="tip"></p>
+    <p class="sat" id="satNote" hidden>今晚 21:00 家庭崇拜。朝早讀完呢段就可以 tick。 <a class="link" href="index.html">打開星期六晚劇場</a></p>
+    <div class="who" id="who">
+      <span class="meta" style="margin:6px 8px 0 0">今日邊個讀</span>
+      <button type="button" data-who="sis">姐姐</button>
+      <button type="button" data-who="bro">弟弟</button>
+      <button type="button" data-who="both">一齊</button>
+    </div>
+    <div class="row">
+      <button class="big tick" id="btnTick">讀完，tick</button>
+      <button class="big read" id="btnRead">廣東話讀經文</button>
+      <button class="big ghost" id="btnStop">停</button>
+    </div>
+    <div class="nav">
+      <button class="big ghost" id="prev">上一目</button>
+      <button class="big ghost" id="now">跳到今日</button>
+      <button class="big ghost" id="next">下一日</button>
+    </div>
+  </article>
+
+  <div class="month-nav">
+    <button class="big ghost" id="mPrev">上個月</button>
+    <h3 id="monthTitle"></h3>
+    <button class="big ghost" id="mNext">下個月</button>
+  </div>
+  <div class="card" style="margin-top:10px">
+    <div class="cal" id="cal"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const DAYS = /*DAYS*/;
+const $ = (id) => document.getElementById(id);
+let idx = 0;
+let month = { y: 2026, m: 8 };
+let who = localStorage.getItem("fw-daily-who") || "both";
+
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.style.display = "block";
+  setTimeout(() => t.style.display = "none", 1800);
+}
+function ticks() {
+  try { return new Set(JSON.parse(localStorage.getItem("fw-daily-ticks") || "[]")); }
+  catch { return new Set(); }
+}
+function saveTicks(set) {
+  localStorage.setItem("fw-daily-ticks", JSON.stringify([...set]));
+}
+function isoFromDate(n) {
+  const y = n.getFullYear(), m = String(n.getMonth()+1).padStart(2,"0"), d = String(n.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+function todayIso() {
+  return isoFromDate(new Date());
+}
+function indexOfDate(iso) {
+  const i = DAYS.findIndex((x) => x.date === iso);
+  return i < 0 ? 0 : i;
+}
+function streakCount(set) {
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);
+  let iso = isoFromDate(d);
+  if (!set.has(iso)) {
+    d.setDate(d.getDate() - 1);
+    iso = isoFromDate(d);
+  }
+  let n = 0;
+  while (set.has(iso)) {
+    n += 1;
+    d.setDate(d.getDate() - 1);
+    iso = isoFromDate(d);
+    if (n > 400) break;
+  }
+  return n;
+}
+function paintStats() {
+  const set = ticks();
+  const n = DAYS.filter((d) => set.has(d.date)).length;
+  $("doneN").textContent = n;
+  $("streak").textContent = streakCount(set);
+  $("bar").style.width = (n / DAYS.length * 100) + "%";
+}
+function pickVoice() {
+  const voices = speechSynthesis.getVoices();
+  return voices.find((v) => /hk|hong kong|yue|cantonese|hiu|tracy/i.test(v.name + v.lang))
+    || voices.find((v) => /zh/i.test(v.lang))
+    || null;
+}
+function speak(text) {
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = pickVoice();
+  if (v) { u.voice = v; u.lang = v.lang; } else u.lang = "zh-HK";
+  u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+function renderScripture(d) {
+  $("scripture").innerHTML = (d.passages || []).map((p) => {
+    const name = p.src === "ccv" ? "新漢語譯本" : "新譯本";
+    const copy = p.src === "ccv"
+      ? "經文引自《聖經．新漢語譯本》，版權屬於漢語聖經協會有限公司。"
+      : "經文引自《聖經新譯本》，版權屬於環球聖經公會。";
+    const verses = p.verses || [];
+    const body = verses.length
+      ? verses.map((v) => `<p class="v"><span class="n">${v.n}</span>${escapeHtml(v.text)}</p>`).join("")
+      : `<p class="miss">呢幾節暫時載入唔到，請打開家裡聖經讀 ${p.chap}:${p.secs}。</p>`;
+    return `<div class="pass">
+      <div class="pass-head">${name} · ${p.chap}:${p.secs}</div>
+      <div class="verses">${body}</div>
+      <p class="copy">${copy}</p>
+    </div>`;
+  }).join("");
+}
+function verseSpeech(d) {
+  return (d.passages || [])
+    .flatMap((p) => p.verses || [])
+    .map((v) => v.text)
+    .join("");
+}
+function render() {
+  const d = DAYS[idx];
+  const set = ticks();
+  const done = set.has(d.date);
+  $("meta").textContent = `${d.date}　星期${d.dow}　·　崇拜第 ${d.week} 週　${d.theme}　·　金句 ${d.verse}`;
+  $("title").textContent = d.title;
+  $("ref").textContent = d.ref;
+  $("tip").textContent = d.tip;
+  $("satNote").hidden = !d.sat;
+  $("btnTick").textContent = done ? "已讀完 ✓  再撳取消" : "讀完，tick";
+  $("btnTick").classList.toggle("on", done);
+  document.querySelectorAll("#who button").forEach((b) => b.classList.toggle("on", b.dataset.who === who));
+  renderScripture(d);
+  paintStats();
+  renderCal();
+  localStorage.setItem("fw-daily-idx", String(idx));
+}
+function renderCal() {
+  const set = ticks();
+  const first = new Date(month.y, month.m, 1);
+  const start = (first.getDay());
+  const last = new Date(month.y, month.m + 1, 0).getDate();
+  $("monthTitle").textContent = `${month.y} 年 ${month.m + 1} 月`;
+  const cells = ["日","一","二","三","四","五","六"].map((x) => `<b>${x}</b>`);
+  for (let i = 0; i < start; i++) cells.push(`<button class="day mute" disabled></button>`);
+  const today = todayIso();
+  for (let n = 1; n <= last; n++) {
+    const iso = `${month.y}-${String(month.m+1).padStart(2,"0")}-${String(n).padStart(2,"0")}`;
+    const has = DAYS.some((d) => d.date === iso);
+    const cls = ["day", set.has(iso) ? "done" : "", iso === today ? "today" : "", has ? "" : "mute"].join(" ");
+    cells.push(`<button class="${cls}" data-iso="${iso}" ${has ? "" : "disabled"}>${n}</button>`);
+  }
+  $("cal").innerHTML = cells.join("");
+  $("cal").querySelectorAll("button[data-iso]").forEach((b) => {
+    b.onclick = () => {
+      idx = indexOfDate(b.dataset.iso);
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+  });
+}
+
+$("btnTick").onclick = () => {
+  const set = ticks();
+  const iso = DAYS[idx].date;
+  if (set.has(iso)) set.delete(iso);
+  else set.add(iso);
+  saveTicks(set);
+  render();
+  toast(set.has(iso) ? "剔咗。聽日繼續。" : "取消剔咗。");
+};
+$("btnRead").onclick = () => {
+  const d = DAYS[idx];
+  const body = verseSpeech(d);
+  speak(body ? `${d.ref}。${body}` : `今日讀${d.ref}。${d.tip}`);
+};
+$("btnStop").onclick = () => speechSynthesis.cancel();
+$("prev").onclick = () => { idx = Math.max(0, idx - 1); month = { y: Number(DAYS[idx].date.slice(0,4)), m: Number(DAYS[idx].date.slice(5,7))-1 }; render(); };
+$("next").onclick = () => { idx = Math.min(DAYS.length-1, idx + 1); month = { y: Number(DAYS[idx].date.slice(0,4)), m: Number(DAYS[idx].date.slice(5,7))-1 }; render(); };
+$("now").onclick = () => {
+  idx = indexOfDate(todayIso());
+  month = { y: Number(DAYS[idx].date.slice(0,4)), m: Number(DAYS[idx].date.slice(5,7))-1 };
+  render();
+};
+$("mPrev").onclick = () => { month.m -= 1; if (month.m < 0) { month.m = 11; month.y -= 1; } renderCal(); };
+$("mNext").onclick = () => { month.m += 1; if (month.m > 11) { month.m = 0; month.y += 1; } renderCal(); };
+$("who").onclick = (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  who = b.dataset.who;
+  localStorage.setItem("fw-daily-who", who);
+  render();
+};
+speechSynthesis.onvoiceschanged = () => {};
+idx = indexOfDate(todayIso());
+month = { y: Number(DAYS[idx].date.slice(0,4)), m: Number(DAYS[idx].date.slice(5,7))-1 };
+render();
+</script>
+</body>
+</html>

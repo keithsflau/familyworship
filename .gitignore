@@ -2,3 +2,7 @@
 Thumbs.db
 Desktop.ini
 *.tmp
+__pycache__/
+_ccv_cache.json
+_ncv_cache.json
+_eph.txt
